@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import AppLayout from '@/layouts/app-layout';
 import partnersRoutes from '@/routes/partners';
+import { fetchPartners } from '@/utils/partners';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
@@ -34,10 +35,8 @@ export default function PartnersPage() {
     const loadPartners = async () => {
         try {
             setError(null);
-            const res = await fetch(partnersRoutes.list().url, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error('Failed to load partners');
-            const json = await res.json();
-            setPartners(json.data ?? []);
+            const list = await fetchPartners();
+            setPartners(list);
         } catch (e) {
             setError((e as Error).message);
         } finally {

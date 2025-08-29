@@ -1,12 +1,14 @@
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import partnersRoutes from '@/routes/partners';
+import { fetchPartners } from '@/utils/partners';
 import informationRoutes from '@/routes/information';
 import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Textarea from '@/components/ui/textarea';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,10 +41,8 @@ export default function Dashboard() {
         const load = async () => {
             try {
                 setError(null);
-                const res = await fetch(partnersRoutes.list().url, { headers: { Accept: 'application/json' } });
-                if (!res.ok) throw new Error('Failed to load partners');
-                const json = await res.json();
-                setPartners(json.data ?? []);
+                const list = await fetchPartners();
+                setPartners(list);
             } catch (e) {
                 setError((e as Error).message);
             } finally {
@@ -82,17 +82,6 @@ export default function Dashboard() {
     const showEmptyInfo = !infosLoading && !infosError && infos.length === 0;
     const canShowAssistant = !loading && !infosLoading && !error && !infosError && partners.length > 0 && infos.length > 0;
 
-    function Textarea(props: React.ComponentProps<'textarea'>) {
-        return (
-            <textarea
-                data-slot="textarea"
-                className={
-                    'flex h-24 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
-                }
-                {...props}
-            />
-        );
-    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
