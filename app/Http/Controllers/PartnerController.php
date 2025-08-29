@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Partner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use App\Http\Requests\Partner\StorePartnerRequest;
+use App\Http\Requests\Partner\UpdatePartnerRequest;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,14 +19,11 @@ class PartnerController extends Controller
         return Inertia::render('partners/index');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StorePartnerRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
+        $validated = $request->validated();
 
-        Partner::create([
+        Partner::query()->create([
             'user_id' => $request->user()->id,
             ...$validated,
         ]);
@@ -32,14 +31,11 @@ class PartnerController extends Controller
         return to_route('partners.index');
     }
 
-    public function update(Request $request, Partner $partner): RedirectResponse
+    public function update(UpdatePartnerRequest $request, Partner $partner): RedirectResponse
     {
         $this->authorizeAccess($request, $partner);
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-        ]);
+        $validated = $request->validated();
 
         $partner->update($validated);
 
