@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Partner;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use App\Http\Requests\Partner\StorePartnerRequest;
 use App\Http\Requests\Partner\UpdatePartnerRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Partner;
+use App\Stores\PartnerStore;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\JsonResponse;
 
 class PartnerController extends Controller
 {
+    public function __construct(private readonly PartnerStore $store)
+    {
+        //
+    }
+
     public function index(Request $request): Response
     {
         return Inertia::render('partners/index');
@@ -23,10 +28,7 @@ class PartnerController extends Controller
     {
         $validated = $request->validated();
 
-        Partner::query()->create([
-            'user_id' => $request->user()->id,
-            ...$validated,
-        ]);
+        $this->store->createPartner($request->user()->id, $validated);
 
         return to_route('partners.index');
     }
@@ -37,34 +39,31 @@ class PartnerController extends Controller
 
         $validated = $request->validated();
 
-        $partner->update($validated);
+        $this->store->update($partner, $validated);
 
         return to_route('partners.index');
+    }
+
+    protected function authorizeAccess(Request $request, Partner $partner): void
+    {
+        abort_unless($partner->user_id === $request->user()->id, 403);
     }
 
     public function destroy(Request $request, Partner $partner): RedirectResponse
     {
         $this->authorizeAccess($request, $partner);
 
-        $partner->delete();
+        $this->store->delete($partner);
 
         return to_route('partners.index');
     }
 
     public function list(Request $request): JsonResponse
     {
-        $partners = Partner::query()
-            ->where('user_id', $request->user()->id)
-            ->latest()
-            ->get(['id', 'name', 'description', 'created_at', 'updated_at']);
+        $partners = $this->store->partners($request->user()->id);
 
         return response()->json([
             'data' => $partners,
         ]);
-    }
-
-    protected function authorizeAccess(Request $request, Partner $partner): void
-    {
-        abort_unless($partner->user_id === $request->user()->id, 403);
     }
 }
