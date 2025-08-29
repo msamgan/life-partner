@@ -1,4 +1,3 @@
-import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { Heart } from 'lucide-react';
@@ -19,9 +18,8 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         <Link href={home()} className="flex flex-col items-center gap-2 font-medium">
                             <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                                 <Heart className="h-6 w-6 text-primary" />
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
                             </div>
-                            <span className="text-lg font-semibold text-primary">LifePartner</span>
+                            <span className="text-lg font-semibold text-primary">Life Partner</span>
                         </Link>
 
                         <div className="space-y-2 text-center">
@@ -33,7 +31,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                 </div>
             </div>
             <div className="mt-6 text-center text-sm text-muted-foreground">
-                <p>LifePartner - Your AI assistant for relationship planning</p>
+                <p>Life Partner - Your AI assistant for relationship planning</p>
             </div>
         </div>
     );

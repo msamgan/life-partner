@@ -5,7 +5,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Life Partner';
 
 createInertiaApp({
     title: (title) => title ? `${title} - ${appName}` : appName,
@@ -18,7 +18,7 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
-});
+}).then();
 
 // This will set light / dark mode on load...
 initializeTheme();

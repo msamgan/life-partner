@@ -5,12 +5,12 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Heart, HeartHandshake, Info } from 'lucide-react';
+import { Heart, HeartHandshake, Info } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Partner Dashboard',
+        title: 'Dashboard',
         href: dashboard(),
         icon: Heart,
     },
@@ -18,7 +18,7 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'About LifePartner',
+        title: 'About Life Partner',
         href: 'https://github.com/laravel/react-starter-kit',
         icon: Info,
     },
