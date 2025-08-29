@@ -1,11 +1,13 @@
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import AppLayout from '@/layouts/app-layout';
 import informationRoutes from '@/routes/information';
+import partnersRoutes from '@/routes/partners';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
@@ -21,6 +23,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 type Information = {
     id: number;
     content: string;
+    partner_id: number | null;
+    partner_name?: string | null;
+};
+
+type Partner = {
+    id: number;
+    name: string;
 };
 
 
@@ -39,6 +48,7 @@ function Textarea(props: React.ComponentProps<'textarea'>) {
 
 export default function InformationPage() {
     const [items, setItems] = useState<Information[]>([]);
+    const [partners, setPartners] = useState<Partner[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -56,8 +66,20 @@ export default function InformationPage() {
         }
     };
 
+    const loadPartners = async () => {
+        try {
+            const res = await fetch(partnersRoutes.list().url, { headers: { Accept: 'application/json' } });
+            if (!res.ok) throw new Error('Failed to load partners');
+            const json = await res.json();
+            setPartners(json.data ?? []);
+        } catch {
+            // ignore partner loading error on this page, keep empty list
+        }
+    };
+
     useEffect(() => {
         void loadItems();
+        void loadPartners();
     }, []);
 
     const [editing, setEditing] = useState<Information | null>(null);
@@ -92,13 +114,35 @@ export default function InformationPage() {
                                         {({ processing, recentlySuccessful, errors }) => (
                                             <>
                                                 <div className="grid gap-2">
+                                                    {partners.length <= 1 ? (
+                                                        <div className="text-sm text-muted-foreground">
+                                                            {partners.length === 1 ? (
+                                                                <>
+                                                                    Adding info for <span className="font-medium">{partners[0].name}</span>
+                                                                    <input type="hidden" name="partner_id" value={partners[0].id} />
+                                                                </>
+                                                            ) : (
+                                                                <>No partners found. Please add a partner first.</>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            <Label htmlFor="partner_id">Partner</Label>
+                                                            <select id="partner_id" name="partner_id" className="h-9 rounded-md border px-3 py-1 bg-transparent">
+                                                                {partners.map((p) => (
+                                                                    <option key={p.id} value={p.id}>
+                                                                        {p.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                            <InputError message={errors.partner_id} />
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                <div className="grid gap-2">
                                                     <Label htmlFor="content">Content</Label>
-                                                    <Textarea
-                                                        id="content"
-                                                        name="content"
-                                                        placeholder="Type your information here"
-                                                        required
-                                                    />
+                                                    <Textarea id="content" name="content" placeholder="Type your information here" required />
                                                     <InputError message={errors.content} />
                                                 </div>
 
@@ -108,7 +152,7 @@ export default function InformationPage() {
                                                             Cancel
                                                         </Button>
                                                     </SheetClose>
-                                                    <Button disabled={processing} type="submit">
+                                                    <Button disabled={processing || partners.length === 0} type="submit">
                                                         Save
                                                     </Button>
                                                     <Transition
@@ -134,7 +178,7 @@ export default function InformationPage() {
                     <HeadingSmall title="Your information" description="Manage saved information entries" />
                     <div className="overflow-hidden rounded-md border">
                         <table className="w-full text-sm">
-                            <thead className="bg-muted/50">
+                            <thead className="bg-muted/50 text-muted-foreground/80">
                                 <tr>
                                     <th className="px-4 py-2 text-left">Content</th>
                                     <th className="px-4 py-2 text-right">Actions</th>
@@ -143,8 +187,32 @@ export default function InformationPage() {
                             <tbody>
                                 {loading && (
                                     <tr>
-                                        <td colSpan={2} className="px-4 py-6 text-center text-muted-foreground">
-                                            Loading...
+                                        <td colSpan={2} className="px-4 py-4">
+                                            <div className="space-y-2">
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="flex-1 space-y-2">
+                                                        <Skeleton className="h-4 w-1/4" />
+                                                        <Skeleton className="h-3 w-3/4" />
+                                                        <Skeleton className="h-3 w-2/3" />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Skeleton className="h-8 w-16" />
+                                                        <Skeleton className="h-8 w-20" />
+                                                    </div>
+                                                </div>
+                                                <Skeleton className="h-px w-full" />
+                                                <div className="flex items-start justify-between gap-4">
+                                                    <div className="flex-1 space-y-2">
+                                                        <Skeleton className="h-4 w-1/4" />
+                                                        <Skeleton className="h-3 w-3/4" />
+                                                        <Skeleton className="h-3 w-1/2" />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Skeleton className="h-8 w-16" />
+                                                        <Skeleton className="h-8 w-20" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 )}
@@ -165,9 +233,12 @@ export default function InformationPage() {
                                 {!loading &&
                                     !error &&
                                     items.map((it) => (
-                                        <tr key={it.id} className="border-t">
+                                        <tr key={it.id} className="border-t hover:bg-muted/40 transition-colors">
                                             <td className="px-4 py-2">
                                                 <div className="pr-4">
+                                                    {it.partner_name && (
+                                                        <div className="text-xs text-muted-foreground mb-1">For: <span className="font-medium text-foreground">{it.partner_name}</span></div>
+                                                    )}
                                                     <div className="whitespace-pre-wrap text-muted-foreground">{it.content}</div>
                                                 </div>
                                             </td>
@@ -201,13 +272,35 @@ export default function InformationPage() {
                                                                     {({ processing, errors, recentlySuccessful }) => (
                                                                         <>
                                                                             <div className="grid gap-2">
+                                                                                {partners.length <= 1 ? (
+                                                                                    <div className="text-sm text-muted-foreground">
+                                                                                        {partners.length === 1 ? (
+                                                                                            <>
+                                                                                                Adding info for <span className="font-medium">{partners[0].name}</span>
+                                                                                                <input type="hidden" name="partner_id" value={partners[0].id} />
+                                                                                            </>
+                                                                                        ) : (
+                                                                                            <>No partners found. Please add a partner first.</>
+                                                                                        )}
+                                                                                    </div>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        <Label htmlFor={`edit-partner_id-${it.id}`}>Partner</Label>
+                                                                                        <select id={`edit-partner_id-${it.id}`} name="partner_id" defaultValue={it.partner_id ?? undefined} className="h-9 rounded-md border px-3 py-1 bg-transparent">
+                                                                                            {partners.map((p) => (
+                                                                                                <option key={p.id} value={p.id}>
+                                                                                                    {p.name}
+                                                                                                </option>
+                                                                                            ))}
+                                                                                        </select>
+                                                                                        <InputError message={errors.partner_id} />
+                                                                                    </>
+                                                                                )}
+                                                                            </div>
+
+                                                                            <div className="grid gap-2">
                                                                                 <Label htmlFor={`edit-content-${it.id}`}>Content</Label>
-                                                                                <Textarea
-                                                                                    id={`edit-content-${it.id}`}
-                                                                                    name="content"
-                                                                                    defaultValue={it.content}
-                                                                                    required
-                                                                                />
+                                                                                <Textarea id={`edit-content-${it.id}`} name="content" defaultValue={it.content} required />
                                                                                 <InputError message={errors.content} />
                                                                             </div>
                                                                             <div className="flex items-center justify-end gap-2">

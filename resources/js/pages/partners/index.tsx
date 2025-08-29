@@ -1,6 +1,7 @@
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -123,7 +124,7 @@ export default function PartnersPage() {
                     <HeadingSmall title="Your partners" description="Manage your saved partners" />
                     <div className="overflow-hidden rounded-md border">
                         <table className="w-full text-sm">
-                            <thead className="bg-muted/50">
+                            <thead className="bg-muted/50 text-muted-foreground/80">
                                 <tr>
                                     <th className="px-4 py-2 text-left">Partner</th>
                                     <th className="px-4 py-2 text-right">Actions</th>
@@ -132,8 +133,30 @@ export default function PartnersPage() {
                             <tbody>
                                 {loading && (
                                     <tr>
-                                        <td colSpan={3} className="px-4 py-6 text-center text-muted-foreground">
-                                            Loading...
+                                        <td colSpan={3} className="px-4 py-4">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between gap-4">
+                                                    <div className="flex-1">
+                                                        <div className="mb-2 h-4 w-1/3"><Skeleton className="h-4 w-1/3" /></div>
+                                                        <Skeleton className="h-3 w-2/3" />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Skeleton className="h-8 w-16" />
+                                                        <Skeleton className="h-8 w-20" />
+                                                    </div>
+                                                </div>
+                                                <Skeleton className="h-px w-full" />
+                                                <div className="flex items-center justify-between gap-4">
+                                                    <div className="flex-1">
+                                                        <div className="mb-2 h-4 w-1/3"><Skeleton className="h-4 w-1/3" /></div>
+                                                        <Skeleton className="h-3 w-1/2" />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Skeleton className="h-8 w-16" />
+                                                        <Skeleton className="h-8 w-20" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 )}
@@ -154,7 +177,7 @@ export default function PartnersPage() {
                                 {!loading &&
                                     !error &&
                                     partners.map((p) => (
-                                        <tr key={p.id} className="border-t">
+                                        <tr key={p.id} className="border-t hover:bg-muted/40 transition-colors">
                                             <td className="px-4 py-2">
                                                 <div className="pr-4">
                                                     <div className="font-medium">{p.name}</div>

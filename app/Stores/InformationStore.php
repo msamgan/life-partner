@@ -15,7 +15,18 @@ class InformationStore
         return Information::query()
             ->where('user_id', $userId)
             ->latest()
-            ->get(['id', 'content', 'created_at', 'updated_at']);
+            ->with('partner:id,name')
+            ->get(['id', 'user_id', 'partner_id', 'content', 'created_at', 'updated_at'])
+            ->map(function (Information $info) {
+                return [
+                    'id' => $info->id,
+                    'content' => $info->content,
+                    'partner_id' => $info->partner_id,
+                    'partner_name' => optional($info->partner)->name,
+                    'created_at' => $info->created_at,
+                    'updated_at' => $info->updated_at,
+                ];
+            });
     }
 
     /**

@@ -19,6 +19,11 @@ class UpdateInformationRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string'],
+                        'partner_id' => [
+                            'required',
+                            'integer',
+                            \Illuminate\Validation\Rule::exists('partners', 'id')->where(fn ($q) => $q->where('user_id', $this->user()->id)),
+                        ],
         ];
     }
 }

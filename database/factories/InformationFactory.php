@@ -13,7 +13,8 @@ class InformationFactory extends Factory
     {
         return [
             'user_id' => $this->faker->randomNumber(),
-            'content' => $this->faker->word(),
+            'content' => $this->faker->sentence(),
+                        'partner_id' => $this->faker->randomNumber(),
         ];
     }
 }
