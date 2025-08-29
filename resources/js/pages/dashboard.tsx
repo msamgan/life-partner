@@ -69,15 +69,22 @@ export default function Dashboard() {
 
     const showEmpty = !loading && !error && partners.length === 0;
     const showEmptyInfo = !infosLoading && !infosError && infos.length === 0;
+    const canShowAssistant = !loading && !infosLoading && !error && !infosError && partners.length > 0 && infos.length > 0;
+
+    function Textarea(props: React.ComponentProps<'textarea'>) {
+        return (
+            <textarea
+                data-slot="textarea"
+                className={'flex h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'}
+                {...props}
+            />
+        );
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Partner Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6">
-                <div className="rounded-lg border bg-card p-6 shadow-sm">
-                    <h1 className="scroll-m-20 text-2xl font-semibold tracking-tight text-primary">Welcome to Life Partner</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">Your AI assistant for all things relationship planning</p>
-                </div>
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6 pb-28">
 
                 {loading && (
                     <div className="rounded-lg border bg-card p-6 shadow-sm text-sm text-muted-foreground">Loading your partners...</div>
@@ -124,6 +131,16 @@ export default function Dashboard() {
                         <Button asChild>
                             <Link href={informationRoutes.index({ query: { open: 'add' } }).url}>Add information</Link>
                         </Button>
+                    </div>
+                )}
+
+                {canShowAssistant && (
+                    <div className="sticky bottom-0 z-20 -mx-6 mt-auto border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                        <div className="mx-auto w-full max-w-4xl p-4">
+                            <div className="rounded-md border bg-card p-2 shadow-sm">
+                                <Textarea placeholder="Ask Life Partner..." aria-label="Assistant input" />
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
