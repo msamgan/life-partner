@@ -76,7 +76,7 @@ export default function Dashboard() {
                             <p className="text-sm text-muted-foreground">Add a partner to get started with planning and insights.</p>
                         </div>
                         <Button asChild>
-                            <Link href={partnersRoutes.index().url}>Add partner</Link>
+                            <Link href={partnersRoutes.index({ query: { open: 'add' } }).url}>Add partner</Link>
                         </Button>
                     </div>
                 )}

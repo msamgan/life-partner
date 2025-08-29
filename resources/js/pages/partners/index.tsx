@@ -50,6 +50,14 @@ export default function PartnersPage() {
     }, []);
 
     const [editing, setEditing] = useState<Partner | null>(null);
+        const [addOpen, setAddOpen] = useState<boolean>(false);
+
+        useEffect(() => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('open') === 'add') {
+                setAddOpen(true);
+            }
+        }, []);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -59,7 +67,7 @@ export default function PartnersPage() {
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <HeadingSmall title="Partner" description="Create/Update a partner with name and brief description" />
-                        <Sheet>
+                        <Sheet open={addOpen} onOpenChange={setAddOpen}>
                             <SheetTrigger asChild>
                                 <Button size="sm">Add partner</Button>
                             </SheetTrigger>
@@ -74,6 +82,7 @@ export default function PartnersPage() {
                                         options={{ preserveScroll: true }}
                                         resetOnSuccess
                                         onSuccess={() => {
+                                            setAddOpen(false);
                                             void loadPartners();
                                         }}
                                         className="space-y-6"
