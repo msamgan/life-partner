@@ -4,6 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as partnersIndex } from '@/routes/partners';
+import { index as informationIndex } from '@/routes/information';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Heart, HeartHandshake, Info, Users2 } from 'lucide-react';
@@ -19,6 +20,11 @@ const mainNavItems: NavItem[] = [
         title: 'Partners',
         href: partnersIndex(),
         icon: Users2,
+    },
+    {
+        title: 'Information',
+        href: informationIndex(),
+        icon: Info,
     },
 ];
 
