@@ -9,6 +9,7 @@ use App\Stores\PartnerStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,6 +28,7 @@ class PartnerController extends Controller
     public function store(StorePartnerRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['name'] = Str::title($validated['name']);
 
         $this->store->createPartner($request->user()->id, $validated);
 
@@ -38,7 +40,7 @@ class PartnerController extends Controller
         $this->authorizeAccess($request, $partner);
 
         $validated = $request->validated();
-
+        $validated['name'] = Str::title($validated['name']);
         $this->store->update($partner, $validated);
 
         return to_route('partners.index');

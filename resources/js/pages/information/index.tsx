@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import AppLayout from '@/layouts/app-layout';
 import informationRoutes from '@/routes/information';
@@ -83,6 +84,14 @@ export default function InformationPage() {
     }, []);
 
     const [editing, setEditing] = useState<Information | null>(null);
+    const [addOpen, setAddOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('open') === 'add') {
+            setAddOpen(true);
+        }
+    }, []);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -92,7 +101,7 @@ export default function InformationPage() {
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <HeadingSmall title="Information" description="Add notes or information about your partner" />
-                        <Sheet>
+                        <Sheet open={addOpen} onOpenChange={setAddOpen}>
                             <SheetTrigger asChild>
                                 <Button size="sm">Add information</Button>
                             </SheetTrigger>
@@ -107,6 +116,7 @@ export default function InformationPage() {
                                         options={{ preserveScroll: true }}
                                         resetOnSuccess
                                         onSuccess={() => {
+                                            setAddOpen(false);
                                             void loadItems();
                                         }}
                                         className="space-y-6"
@@ -128,13 +138,19 @@ export default function InformationPage() {
                                                     ) : (
                                                         <>
                                                             <Label htmlFor="partner_id">Partner</Label>
-                                                            <select id="partner_id" name="partner_id" className="h-9 rounded-md border px-3 py-1 bg-transparent">
-                                                                {partners.map((p) => (
-                                                                    <option key={p.id} value={p.id}>
-                                                                        {p.name}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
+                                                            <input type="hidden" id="partner_id_hidden" name="partner_id" defaultValue={String(partners[0]?.id)} />
+                                                            <Select defaultValue={String(partners[0]?.id)} onValueChange={(v) => { const el = document.getElementById('partner_id_hidden') as HTMLInputElement | null; if (el) el.value = v; }}>
+                                                                <SelectTrigger id="partner_id">
+                                                                    <SelectValue placeholder="Select a partner" />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    {partners.map((p) => (
+                                                                        <SelectItem key={p.id} value={String(p.id)}>
+                                                                            {p.name}
+                                                                        </SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
                                                             <InputError message={errors.partner_id} />
                                                         </>
                                                     )}
@@ -286,13 +302,19 @@ export default function InformationPage() {
                                                                                 ) : (
                                                                                     <>
                                                                                         <Label htmlFor={`edit-partner_id-${it.id}`}>Partner</Label>
-                                                                                        <select id={`edit-partner_id-${it.id}`} name="partner_id" defaultValue={it.partner_id ?? undefined} className="h-9 rounded-md border px-3 py-1 bg-transparent">
-                                                                                            {partners.map((p) => (
-                                                                                                <option key={p.id} value={p.id}>
-                                                                                                    {p.name}
-                                                                                                </option>
-                                                                                            ))}
-                                                                                        </select>
+                                                                                        <input type="hidden" id={`edit-partner_id_hidden_${it.id}`} name="partner_id" defaultValue={String(it.partner_id ?? partners[0]?.id)} />
+                                                                                        <Select defaultValue={String(it.partner_id ?? partners[0]?.id)} onValueChange={(v) => { const el = document.getElementById(`edit-partner_id_hidden_${it.id}`) as HTMLInputElement | null; if (el) el.value = v; }}>
+                                                                                            <SelectTrigger id={`edit-partner_id-${it.id}`}>
+                                                                                                <SelectValue placeholder="Select a partner" />
+                                                                                            </SelectTrigger>
+                                                                                            <SelectContent>
+                                                                                                {partners.map((p) => (
+                                                                                                    <SelectItem key={p.id} value={String(p.id)}>
+                                                                                                        {p.name}
+                                                                                                    </SelectItem>
+                                                                                                ))}
+                                                                                            </SelectContent>
+                                                                                        </Select>
                                                                                         <InputError message={errors.partner_id} />
                                                                                     </>
                                                                                 )}
