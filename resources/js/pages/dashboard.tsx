@@ -79,7 +79,7 @@ export default function Dashboard() {
     }, []);
 
     const showEmpty = !loading && !error && partners.length === 0;
-    const showEmptyInfo = !infosLoading && !infosError && infos.length === 0;
+    const showEmptyInfo = !infosLoading && !infosError && infos.length === 0 && !showEmpty;
     const canShowAssistant = !loading && !infosLoading && !error && !infosError && partners.length > 0 && infos.length > 0;
 
 
@@ -111,6 +111,7 @@ export default function Dashboard() {
                         </Button>
                     </div>
                 )}
+
                 {showEmptyInfo && (
                     <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-8 text-center">
                         <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
@@ -132,7 +133,7 @@ export default function Dashboard() {
                 )}
 
                 {canShowAssistant && (
-                    <div className="sticky bottom-3 z-20 -mx-6 mt-auto">
+                    <div className="fixed bottom-6 left-0 right-0">
                         <div className="mx-auto w-full max-w-4xl px-4">
                             {partners.length > 1 && selectedPartnerId !== null && (
                                 <div className="mb-2">
@@ -151,6 +152,7 @@ export default function Dashboard() {
                                 </div>
                             )}
                             <Textarea
+                                autoFocus={true}
                                 placeholder={
                                     partners.length === 1
                                         ? `Get advice from Life Partner AI for ${partners[0].name}`
