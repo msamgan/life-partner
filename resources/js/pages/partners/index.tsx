@@ -9,6 +9,7 @@ import InputError from '@/components/input-error';
 import HeadingSmall from '@/components/heading-small';
 import { Transition } from '@headlessui/react';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -37,32 +38,49 @@ export default function PartnersPage({ partners }: PageProps) {
 
       <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6">
         <div className="space-y-6">
-          <HeadingSmall title="Add partner" description="Create a new partner with name and brief description" />
+          <div className="flex items-center justify-between">
+            <HeadingSmall title="Add partner" description="Create a new partner with name and brief description" />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="sm">Add partner</Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <SheetHeader>
+                  <SheetTitle>Add partner</SheetTitle>
+                  <SheetDescription>Fill in the details below to add a new partner.</SheetDescription>
+                </SheetHeader>
+                <div className="p-4 pt-0">
+                  <Form {...partnersRoutes.store.form()} options={{ preserveScroll: true }} className="space-y-6">
+                    {({ processing, recentlySuccessful, errors }) => (
+                      <>
+                        <div className="grid gap-2">
+                          <Label htmlFor="name">Name</Label>
+                          <Input id="name" name="name" placeholder="Partner name" required />
+                          <InputError message={errors.name} />
+                        </div>
 
-          <Form {...partnersRoutes.store.form()} options={{ preserveScroll: true }} className="space-y-6">
-            {({ processing, recentlySuccessful, errors }) => (
-              <>
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" placeholder="Partner name" required />
-                  <InputError message={errors.name} />
-                </div>
+                        <div className="grid gap-2">
+                          <Label htmlFor="description">Description</Label>
+                          <Input id="description" name="description" placeholder="Brief description" />
+                          <InputError message={errors.description} />
+                        </div>
 
-                <div className="grid gap-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input id="description" name="description" placeholder="Brief description" />
-                  <InputError message={errors.description} />
+                        <div className="flex items-center gap-2 justify-end">
+                          <SheetClose asChild>
+                            <Button variant="secondary" type="button">Cancel</Button>
+                          </SheetClose>
+                          <Button disabled={processing} type="submit">Save</Button>
+                          <Transition show={recentlySuccessful} enter="transition ease-in-out" enterFrom="opacity-0" leave="transition ease-in-out" leaveTo="opacity-0">
+                            <p className="text-sm text-neutral-600">Saved</p>
+                          </Transition>
+                        </div>
+                      </>
+                    )}
+                  </Form>
                 </div>
-
-                <div className="flex items-center gap-4">
-                  <Button disabled={processing}>Save</Button>
-                  <Transition show={recentlySuccessful} enter="transition ease-in-out" enterFrom="opacity-0" leave="transition ease-in-out" leaveTo="opacity-0">
-                    <p className="text-sm text-neutral-600">Saved</p>
-                  </Transition>
-                </div>
-              </>
-            )}
-          </Form>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
 
         <div className="space-y-4">
