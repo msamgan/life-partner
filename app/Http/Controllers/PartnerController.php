@@ -8,19 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\JsonResponse;
 
 class PartnerController extends Controller
 {
     public function index(Request $request): Response
     {
-        $partners = Partner::query()
-            ->where('user_id', $request->user()->id)
-            ->latest()
-            ->get(['id', 'name', 'description', 'created_at', 'updated_at']);
-
-        return Inertia::render('partners/index', [
-            'partners' => $partners,
-        ]);
+        return Inertia::render('partners/index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -59,6 +53,18 @@ class PartnerController extends Controller
         $partner->delete();
 
         return to_route('partners.index');
+    }
+
+    public function list(Request $request): JsonResponse
+    {
+        $partners = Partner::query()
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get(['id', 'name', 'description', 'created_at', 'updated_at']);
+
+        return response()->json([
+            'data' => $partners,
+        ]);
     }
 
     protected function authorizeAccess(Request $request, Partner $partner): void
