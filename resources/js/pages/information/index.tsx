@@ -9,7 +9,8 @@ import informationRoutes from '@/routes/information';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Mic, MicOff } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -23,19 +24,126 @@ type Information = {
     content: string;
 };
 
-function Textarea(props: React.ComponentProps<'textarea'>) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Simple speech recognition hook using Web Speech API
+function useSpeechToText(onText: (text: string, isFinal: boolean) => void) {
+    const recognitionRef = useRef<any | null>(null);
+    const [supported] = useState<boolean>(
+        () => typeof window !== 'undefined' && (!!(window as any).SpeechRecognition || !!(window as any).webkitSpeechRecognition),
+    );
+    const [listening, setListening] = useState(false);
+
+    useEffect(() => {
+        if (!supported) return;
+        type AnySpeechRecognition = any;
+        const SR: AnySpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        const rec: any = new (SR as any)();
+        rec.lang = document.documentElement.lang || navigator.language || 'en-US';
+        rec.interimResults = true;
+        rec.continuous = true;
+        rec.onresult = (e: any) => {
+            for (let i = e.resultIndex; i < e.results.length; i++) {
+                const result = e.results[i];
+                const transcript = result[0]?.transcript ?? '';
+                onText(transcript, result.isFinal);
+            }
+        };
+        rec.onend = () => {
+            setListening(false);
+        };
+        rec.onerror = () => {
+            setListening(false);
+        };
+        recognitionRef.current = rec;
+        return () => {
+            try {
+                rec.stop();
+            } catch {
+                /* ignore */
+            }
+            recognitionRef.current = null;
+        };
+    }, [supported, onText]);
+
+    const start = () => {
+        if (!supported || listening) return;
+        try {
+            recognitionRef.current?.start();
+            setListening(true);
+        } catch {
+            /* ignore */
+        }
+    };
+
+    const stop = () => {
+        if (!supported || !listening) return;
+        try {
+            recognitionRef.current?.stop();
+        } catch {
+            /* ignore */
+        } finally {
+            setListening(false);
+        }
+    };
+
+    return { supported, listening, start, stop } as const;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<'textarea'>>(function Textarea(props, ref) {
     return (
         <textarea
+            ref={ref}
             data-slot="textarea"
             className={
-                'border-input placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground flex w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive h-32'
+                'flex h-32 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:aria-invalid:ring-destructive/40'
             }
             {...props}
         />
     );
+});
+
+function MicTextarea(props: React.ComponentProps<'textarea'>) {
+    const textareaProps = props;
+    const textRef = useRef<HTMLTextAreaElement | null>(null);
+    const speech = useSpeechToText((fragment, isFinal) => {
+        const base = (textRef.current?.value ?? '').replace(/\s+$/, '');
+        const interim = isFinal ? fragment + ' ' : fragment;
+        const next = (base + (base ? ' ' : '') + interim).trimStart();
+        if (textRef.current) textRef.current.value = next;
+    });
+    return (
+        <div className="relative">
+            <Textarea ref={textRef} {...textareaProps} />
+            <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                <span>{!speech.supported ? 'Speech recognition not supported in this browser.' : 'Tip: Click mic and start speaking.'}</span>
+                {speech.supported && (
+                    <Button
+                        type="button"
+                        variant={speech.listening ? 'destructive' : 'secondary'}
+                        size="sm"
+                        onClick={() => (speech.listening ? speech.stop() : speech.start())}
+                        aria-pressed={speech.listening}
+                        className="ml-2"
+                    >
+                        {speech.listening ? (
+                            <>
+                                <MicOff className="mr-1 h-4 w-4" /> Stop
+                            </>
+                        ) : (
+                            <>
+                                <Mic className="mr-1 h-4 w-4" /> Mic
+                            </>
+                        )}
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default function InformationPage() {
+    // speech handled by MicTextarea component
     const [items, setItems] = useState<Information[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -91,7 +199,12 @@ export default function InformationPage() {
                                             <>
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="content">Content</Label>
-                                                    <Textarea id="content" name="content" placeholder="Type your information here" required />
+                                                    <MicTextarea
+                                                        id="content"
+                                                        name="content"
+                                                        placeholder="Type your information here (or use the mic)"
+                                                        required
+                                                    />
                                                     <InputError message={errors.content} />
                                                 </div>
 
@@ -195,7 +308,12 @@ export default function InformationPage() {
                                                                         <>
                                                                             <div className="grid gap-2">
                                                                                 <Label htmlFor={`edit-content-${it.id}`}>Content</Label>
-                                                                                <Textarea id={`edit-content-${it.id}`} name="content" defaultValue={it.content} required />
+                                                                                <MicTextarea
+                                                                                    id={`edit-content-${it.id}`}
+                                                                                    name="content"
+                                                                                    defaultValue={it.content}
+                                                                                    required
+                                                                                />
                                                                                 <InputError message={errors.content} />
                                                                             </div>
                                                                             <div className="flex items-center justify-end gap-2">
