@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,6 +26,7 @@ type Information = {
 };
 
 export default function Dashboard() {
+    const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);
     const [partners, setPartners] = useState<Partner[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -49,6 +51,15 @@ export default function Dashboard() {
         };
         void load();
     }, []);
+
+    // Set default selected partner id when partners load
+    useEffect(() => {
+        if (partners.length > 0) {
+            setSelectedPartnerId((prev) => prev ?? partners[0].id);
+        } else {
+            setSelectedPartnerId(null);
+        }
+    }, [partners]);
 
     useEffect(() => {
         const loadInfo = async () => {
@@ -75,7 +86,9 @@ export default function Dashboard() {
         return (
             <textarea
                 data-slot="textarea"
-                className={'flex h-24 w-full min-w-0 rounded-md border border-input bg-background px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'}
+                className={
+                    'flex h-24 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm'
+                }
                 {...props}
             />
         );
@@ -85,17 +98,12 @@ export default function Dashboard() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Partner Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6 pb-28">
+                {loading && <div className="rounded-lg bg-card p-6 text-sm text-muted-foreground">Loading your partners...</div>}
 
-                {loading && (
-                    <div className="rounded-lg border bg-card p-6 shadow-sm text-sm text-muted-foreground">Loading your partners...</div>
-                )}
-
-                {error && !loading && (
-                    <div className="rounded-lg border bg-card p-6 shadow-sm text-sm text-red-600">{error}</div>
-                )}
+                {error && !loading && <div className="rounded-lg bg-card p-6 text-sm text-red-600">{error}</div>}
 
                 {showEmpty && (
-                    <div className="rounded-lg border bg-card p-8 shadow-sm flex flex-col items-center text-center gap-4">
+                    <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-8 text-center">
                         {/* Inline SVG illustration to avoid asset dependencies */}
                         <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                             <rect x="10" y="20" width="140" height="80" rx="12" fill="#F3F4F6" />
@@ -115,7 +123,7 @@ export default function Dashboard() {
                     </div>
                 )}
                 {showEmptyInfo && (
-                    <div className="rounded-lg border bg-card p-8 shadow-sm flex flex-col items-center text-center gap-4">
+                    <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-8 text-center">
                         <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                             <rect x="10" y="20" width="140" height="80" rx="12" fill="#F3F4F6" />
                             <path d="M55 60c0-8 6.5-14.5 14.5-14.5S84 52 84 60s-6.5 14.5-14.5 14.5S55 68 55 60Z" fill="#E5E7EB" />
@@ -135,11 +143,32 @@ export default function Dashboard() {
                 )}
 
                 {canShowAssistant && (
-                    <div className="sticky bottom-0 z-20 -mx-6 mt-auto border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                        <div className="mx-auto w-full max-w-4xl p-4">
-                            <div className="rounded-md border bg-card p-2 shadow-sm">
-                                <Textarea placeholder="Ask Life Partner..." aria-label="Assistant input" />
-                            </div>
+                    <div className="sticky bottom-3 z-20 -mx-6 mt-auto">
+                        <div className="mx-auto w-full max-w-4xl px-4">
+                            {partners.length > 1 && selectedPartnerId !== null && (
+                                <div className="mb-2">
+                                    <Select defaultValue={String(selectedPartnerId)} onValueChange={(v) => setSelectedPartnerId(Number(v))}>
+                                        <SelectTrigger aria-label="Select partner">
+                                            <SelectValue placeholder="Select a partner" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {partners.map((p) => (
+                                                <SelectItem key={p.id} value={String(p.id)}>
+                                                    {p.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+                            <Textarea
+                                placeholder={
+                                    partners.length === 1
+                                        ? `Get advice from Life Partner AI for ${partners[0].name}`
+                                        : `Get advice from Life Partner AI for ${partners.find((p) => p.id === selectedPartnerId)?.name ?? 'selected partner'}`
+                                }
+                                aria-label="Assistant input"
+                            />
                         </div>
                     </div>
                 )}
