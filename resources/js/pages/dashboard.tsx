@@ -164,7 +164,7 @@ export default function Dashboard() {
                             <p className="text-sm text-muted-foreground">Add a partner to get started with planning and insights.</p>
                         </div>
                         <Button asChild>
-                            <Link href={partnersRoutes.index({ query: { open: 'add' } }).url}>Add partner</Link>
+                            <Link href={partnersRoutes.index({ query: { open: 'add' } }).url}><svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add partner</Link>
                         </Button>
                     </div>
                 )}
@@ -184,7 +184,7 @@ export default function Dashboard() {
                             <p className="text-sm text-muted-foreground">Add information about your partner to keep important notes.</p>
                         </div>
                         <Button asChild>
-                            <Link href={informationRoutes.index({ query: { open: 'add' } }).url}>Add information</Link>
+                            <Link href={informationRoutes.index({ query: { open: 'add' } }).url}><svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add information</Link>
                         </Button>
                     </div>
                 )}
@@ -247,7 +247,17 @@ export default function Dashboard() {
                                 />
                                 <div className="flex justify-end">
                                     <Button onClick={() => void handleSend()} disabled={isSending || !input.trim() || selectedPartnerId === null}>
-                                        {isSending ? 'Sending…' : 'Send'}
+                                        {isSending ? (
+                                            <>
+                                                <svg aria-hidden className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                                                Sending…
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                                                Send
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </div>

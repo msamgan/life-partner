@@ -68,7 +68,7 @@ export default function PartnersPage() {
                         <HeadingSmall title="Partner" description="Create/Update a partner with name and brief description" />
                         <Sheet open={addOpen} onOpenChange={setAddOpen}>
                             <SheetTrigger asChild>
-                                <Button size="sm">Add partner</Button>
+                                <Button size="sm"><svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add partner</Button>
                             </SheetTrigger>
                             <SheetContent side="right">
                                 <SheetHeader>
@@ -103,10 +103,12 @@ export default function PartnersPage() {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <SheetClose asChild>
                                                         <Button variant="secondary" type="button">
+                                                            <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                                             Cancel
                                                         </Button>
                                                     </SheetClose>
                                                     <Button disabled={processing} type="submit">
+                                                        <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                                                         Save
                                                     </Button>
                                                     <Transition
@@ -200,6 +202,7 @@ export default function PartnersPage() {
                                                     >
                                                         <SheetTrigger asChild>
                                                             <Button size="sm" variant="secondary" onClick={() => setEditing(p)}>
+                                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 2 4 4"/><path d="m2 22 4-1 11-11-3-3L3 18l-1 4"/></svg>
                                                                 Edit
                                                             </Button>
                                                         </SheetTrigger>
@@ -268,6 +271,7 @@ export default function PartnersPage() {
                                                     <Dialog>
                                                         <DialogTrigger asChild>
                                                             <Button size="sm" variant="destructive">
+                                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                                                 Delete
                                                             </Button>
                                                         </DialogTrigger>
@@ -288,6 +292,7 @@ export default function PartnersPage() {
                                                                     <DialogFooter className="gap-2">
                                                                         <DialogClose asChild>
                                                                             <Button variant="secondary" type="button">
+                                                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                                                                 Cancel
                                                                             </Button>
                                                                         </DialogClose>

@@ -103,7 +103,7 @@ export default function InformationPage() {
                         <HeadingSmall title="Information" description="Add notes or information about your partner" />
                         <Sheet open={addOpen} onOpenChange={setAddOpen}>
                             <SheetTrigger asChild>
-                                <Button size="sm">Add information</Button>
+                                <Button size="sm"><svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>Add information</Button>
                             </SheetTrigger>
                             <SheetContent side="right">
                                 <SheetHeader>
@@ -165,10 +165,12 @@ export default function InformationPage() {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <SheetClose asChild>
                                                         <Button variant="secondary" type="button">
+                                                            <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                                             Cancel
                                                         </Button>
                                                     </SheetClose>
                                                     <Button disabled={processing || partners.length === 0} type="submit">
+                                                        <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                                                         Save
                                                     </Button>
                                                     <Transition
@@ -266,6 +268,7 @@ export default function InformationPage() {
                                                     >
                                                         <SheetTrigger asChild>
                                                             <Button size="sm" variant="secondary" onClick={() => setEditing(it)}>
+                                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 2 4 4"/><path d="m2 22 4-1 11-11-3-3L3 18l-1 4"/></svg>
                                                                 Edit
                                                             </Button>
                                                         </SheetTrigger>
@@ -328,10 +331,12 @@ export default function InformationPage() {
                                                                             <div className="flex items-center justify-end gap-2">
                                                                                 <SheetClose asChild>
                                                                                     <Button variant="secondary" type="button">
+                                                                                        <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                                                                         Cancel
                                                                                     </Button>
                                                                                 </SheetClose>
                                                                                 <Button disabled={processing} type="submit">
+                                                                                    <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
                                                                                     Save
                                                                                 </Button>
                                                                                 <Transition
@@ -353,6 +358,7 @@ export default function InformationPage() {
                                                     <Dialog>
                                                         <DialogTrigger asChild>
                                                             <Button size="sm" variant="destructive">
+                                                                <svg aria-hidden className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                                                                 Delete
                                                             </Button>
                                                         </DialogTrigger>
