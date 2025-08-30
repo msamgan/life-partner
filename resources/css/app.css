@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
 @plugin 'tailwindcss-animate';
@@ -60,38 +61,38 @@
 }
 
 :root {
-    --background: oklch(0.99 0.01 15);
-    --foreground: oklch(0.25 0.02 320);
-    --card: oklch(1 0.01 10);
-    --card-foreground: oklch(0.25 0.02 320);
-    --popover: oklch(1 0.01 10);
-    --popover-foreground: oklch(0.25 0.02 320);
-    --primary: oklch(0.65 0.25 0);
-    --primary-foreground: oklch(0.98 0.005 15);
-    --secondary: oklch(0.9 0.05 340);
-    --secondary-foreground: oklch(0.2 0.05 320);
-    --muted: oklch(0.96 0.03 340);
-    --muted-foreground: oklch(0.5 0.05 320);
-    --accent: oklch(0.8 0.1 340);
-    --accent-foreground: oklch(0.2 0.05 320);
-    --destructive: oklch(0.65 0.3 25);
-    --destructive-foreground: oklch(0.98 0.005 15);
-    --border: oklch(0.9 0.03 340);
-    --input: oklch(0.9 0.03 340);
-    --ring: oklch(0.75 0.15 0);
+    --background: #FFF6F9;
+    --foreground: #212121;
+    --card: #FFFFFF;
+    --card-foreground: #212121;
+    --popover: #FFFFFF;
+    --popover-foreground: #212121;
+    --primary: #E91E63;
+    --primary-foreground: #FFFFFF;
+    --secondary: #AD1457;
+    --secondary-foreground: #FFFFFF;
+    --muted: #F8BBD0;
+    --muted-foreground: #757575;
+    --accent: #F8BBD0;
+    --accent-foreground: #212121;
+    --destructive: #C62828;
+    --destructive-foreground: #FFFFFF;
+    --border: #E0E0E0;
+    --input: #E0E0E0;
+    --ring: #E91E63;
     --chart-1: oklch(0.65 0.25 0);
     --chart-2: oklch(0.6 0.2 340);
     --chart-3: oklch(0.55 0.15 280);
     --chart-4: oklch(0.7 0.2 40);
     --chart-5: oklch(0.75 0.15 60);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.98 0.02 340);
-    --sidebar-foreground: oklch(0.25 0.02 320);
-    --sidebar-primary: oklch(0.65 0.25 0);
-    --sidebar-primary-foreground: oklch(0.98 0.005 15);
-    --sidebar-accent: oklch(0.9 0.05 340);
-    --sidebar-accent-foreground: oklch(0.2 0.05 320);
-    --sidebar-border: oklch(0.9 0.03 340);
+    --radius: 1rem;
+    --sidebar: #FFF6F9;
+    --sidebar-foreground: #212121;
+    --sidebar-primary: #E91E63;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #F8BBD0;
+    --sidebar-accent-foreground: #212121;
+    --sidebar-border: #E0E0E0;
     --sidebar-ring: oklch(0.75 0.15 0);
 }
 
