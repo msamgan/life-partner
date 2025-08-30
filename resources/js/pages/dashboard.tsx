@@ -12,7 +12,7 @@ import Textarea from '@/components/ui/textarea';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Partner Dashboard',
+        title: 'Dashboard',
         href: dashboard().url,
     },
 ];
@@ -85,7 +85,7 @@ export default function Dashboard() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Partner Dashboard" />
+            <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-6 pb-28">
                 {loading && <div className="rounded-lg bg-card p-6 text-sm text-muted-foreground">Loading your partners...</div>}
 

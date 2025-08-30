@@ -1,7 +1,7 @@
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
-import { Heart } from 'lucide-react';
 import { type PropsWithChildren } from 'react';
+import AppLogoIcon from '@/components/app-logo-icon';
 
 interface AuthLayoutProps {
     name?: string;
@@ -16,8 +16,8 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col items-center gap-4">
                         <Link href={home()} className="flex flex-col items-center gap-2 font-medium">
-                            <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                                <Heart className="h-6 w-6 text-primary" />
+                            <div className="mb-1 flex h-12 w-12 items-center justify-center">
+                                <AppLogoIcon className="h-10 w-10 rounded-md" />
                             </div>
                             <span className="text-lg font-semibold text-primary">Life Partner</span>
                         </Link>
