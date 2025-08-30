@@ -52,4 +52,5 @@ export interface Information {
     id: number;
     content?: string; // optional on dashboard list context
     partner_id?: number | null; // some pages may not require it
+    partner_name?: string | null; // present on list API for display
 }

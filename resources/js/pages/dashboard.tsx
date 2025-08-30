@@ -3,6 +3,7 @@ import { dashboard } from '@/routes';
 import partnersRoutes from '@/routes/partners';
 import { fetchPartners } from '@/utils/partners';
 import { fetchInformation } from '@/utils/information';
+import informationRoutes from '@/routes/information';
 import { sendPartnerAssist } from '@/utils/assistant';
 import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem, type Partner, type Information } from '@types';
