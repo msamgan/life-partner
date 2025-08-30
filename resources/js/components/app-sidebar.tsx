@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { index as partnersIndex } from '@/routes/partners';
 import { index as informationIndex } from '@/routes/information';
-import { type NavItem } from '@/types';
+import { type NavItem } from '@types';
 import { Link } from '@inertiajs/react';
 import { Heart, HeartHandshake, Info, Users2 } from 'lucide-react';
 import AppLogo from './app-logo';

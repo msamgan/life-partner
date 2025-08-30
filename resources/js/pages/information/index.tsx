@@ -9,7 +9,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTi
 import AppLayout from '@/layouts/app-layout';
 import informationRoutes from '@/routes/information';
 import partnersRoutes from '@/routes/partners';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';

@@ -4,7 +4,7 @@ import partnersRoutes from '@/routes/partners';
 import { fetchPartners } from '@/utils/partners';
 import informationRoutes from '@/routes/information';
 import { Button } from '@/components/ui/button';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem } from '@types';
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
