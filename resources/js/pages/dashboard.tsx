@@ -167,22 +167,7 @@ export default function Dashboard() {
                 {canShowAssistant && (
                     <div className="fixed bottom-6 left-0 right-0">
                         <div className="mx-auto w-full max-w-4xl px-4">
-                            {partners.length > 1 && selectedPartnerId !== null && (
-                                <div className="mb-2">
-                                    <Select defaultValue={String(selectedPartnerId)} onValueChange={(v) => setSelectedPartnerId(Number(v))}>
-                                        <SelectTrigger aria-label="Select partner">
-                                            <SelectValue placeholder="Select a partner" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {partners.map((p) => (
-                                                <SelectItem key={p.id} value={String(p.id)}>
-                                                    {p.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            )}
+                            {/* Partner selector moved under the text area when multiple partners */}
 
                             {/* Chat window */}
                             {chatMode && (
@@ -220,7 +205,25 @@ export default function Dashboard() {
                                         }
                                     }}
                                 />
-                                <div className="flex justify-end">
+                                <div className="flex items-center justify-between gap-2">
+                                    {partners.length > 1 && selectedPartnerId !== null ? (
+                                        <div className="min-w-0 flex-1 sm:max-w-xs">
+                                            <Select defaultValue={String(selectedPartnerId)} onValueChange={(v) => setSelectedPartnerId(Number(v))}>
+                                                <SelectTrigger aria-label="Select partner">
+                                                    <SelectValue placeholder="Select a partner" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {partners.map((p) => (
+                                                        <SelectItem key={p.id} value={String(p.id)}>
+                                                            {p.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    ) : (
+                                        <div />
+                                    )}
                                     <Button onClick={() => void handleSend()} disabled={isSending || !input.trim() || selectedPartnerId === null}>
                                         {isSending ? (
                                             <>
