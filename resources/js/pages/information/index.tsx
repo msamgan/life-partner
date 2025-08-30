@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import AppLayout from '@/layouts/app-layout';
 import informationRoutes from '@/routes/information';
-import partnersRoutes from '@/routes/partners';
+import { fetchInformation } from '@/utils/information';
+import { fetchPartners } from '@/utils/partners';
 import { type BreadcrumbItem, type Information, type Partner } from '@types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
@@ -46,10 +47,8 @@ export default function InformationPage() {
     const loadItems = async () => {
         try {
             setError(null);
-            const res = await fetch(informationRoutes.list().url, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error('Failed to load information');
-            const json = await res.json();
-            setItems(json.data ?? []);
+            const list = await fetchInformation();
+            setItems(list);
         } catch (e) {
             setError((e as Error).message);
         } finally {
@@ -59,10 +58,8 @@ export default function InformationPage() {
 
     const loadPartners = async () => {
         try {
-            const res = await fetch(partnersRoutes.list().url, { headers: { Accept: 'application/json' } });
-            if (!res.ok) throw new Error('Failed to load partners');
-            const json = await res.json();
-            setPartners(json.data ?? []);
+            const list = await fetchPartners();
+            setPartners(list);
         } catch {
             // ignore partner loading error on this page, keep empty list
         }

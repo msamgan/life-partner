@@ -2,7 +2,8 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import partnersRoutes from '@/routes/partners';
 import { fetchPartners } from '@/utils/partners';
-import informationRoutes from '@/routes/information';
+import { fetchInformation } from '@/utils/information';
+import { sendPartnerAssist } from '@/utils/assistant';
 import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem, type Partner, type Information } from '@types';
 import { Head, Link } from '@inertiajs/react';
@@ -63,10 +64,8 @@ export default function Dashboard() {
         const loadInfo = async () => {
             try {
                 setInfosError(null);
-                const res = await fetch(informationRoutes.list().url, { headers: { Accept: 'application/json' } });
-                if (!res.ok) throw new Error('Failed to load information');
-                const json = await res.json();
-                setInfos(json.data ?? []);
+                const list = await fetchInformation();
+                setInfos(list);
             } catch (e) {
                 setInfosError((e as Error).message);
             } finally {
@@ -79,11 +78,6 @@ export default function Dashboard() {
     const showEmpty = !loading && !error && partners.length === 0;
     const showEmptyInfo = !infosLoading && !infosError && infos.length === 0 && !showEmpty;
     const canShowAssistant = !loading && !infosLoading && !error && !infosError && partners.length > 0 && infos.length > 0;
-
-    function getCsrfToken() {
-        if (typeof document === 'undefined') return undefined;
-        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? undefined;
-    }
 
     async function handleSend() {
         if (!input.trim() || selectedPartnerId === null || isSending) return;
@@ -98,24 +92,12 @@ export default function Dashboard() {
         setMessages((prev) => [...prev, userMsg]);
         setInput('');
         try {
-            const res = await fetch('/partners/assist', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': getCsrfToken() ?? '',
-                },
-                body: JSON.stringify({ partner_id: selectedPartnerId, message: userMsg.content }),
-            });
-            // We don't strictly need the response to switch UI; but we can optionally process it
-            if (res.ok) {
-                const json = await res.json().catch(() => null);
-                if (json?.data?.reply) {
-                    setMessages((prev) => [
-                        ...prev,
-                        { id: `a-${Date.now()}`, role: 'assistant', content: String(json.data.reply), at: new Date().toISOString() },
-                    ]);
-                }
+            const result = await sendPartnerAssist(selectedPartnerId, userMsg.content);
+            if (result?.reply) {
+                setMessages((prev) => [
+                    ...prev,
+                    { id: `a-${Date.now()}`, role: 'assistant', content: String(result.reply), at: new Date().toISOString() },
+                ]);
             }
         } catch {
             // Show a simple error message in chat area
