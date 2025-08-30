@@ -9,4 +9,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/partners', [PartnerController::class, 'store'])->name('partners.store');
     Route::patch('/partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
     Route::delete('/partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
+    Route::post('/partners/assist', [PartnerController::class, 'assist'])->name('partners.assist');
 });

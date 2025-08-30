@@ -6,7 +6,7 @@ import informationRoutes from '@/routes/information';
 import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Textarea from '@/components/ui/textarea';
 
@@ -36,6 +36,12 @@ export default function Dashboard() {
     const [infos, setInfos] = useState<Information[]>([]);
     const [infosLoading, setInfosLoading] = useState<boolean>(true);
     const [infosError, setInfosError] = useState<string | null>(null);
+
+    const [input, setInput] = useState<string>('');
+    const [isSending, setIsSending] = useState<boolean>(false);
+    const [chatMode, setChatMode] = useState<boolean>(false);
+    const [messages, setMessages] = useState<{ id: string; role: 'user' | 'assistant'; content: string; at: string }[]>([]);
+    const chatEndRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const load = async () => {
@@ -82,6 +88,57 @@ export default function Dashboard() {
     const showEmptyInfo = !infosLoading && !infosError && infos.length === 0 && !showEmpty;
     const canShowAssistant = !loading && !infosLoading && !error && !infosError && partners.length > 0 && infos.length > 0;
 
+    function getCsrfToken() {
+        if (typeof document === 'undefined') return undefined;
+        return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? undefined;
+    }
+
+    async function handleSend() {
+        if (!input.trim() || selectedPartnerId === null || isSending) return;
+        setIsSending(true);
+        const userMsg = {
+            id: `u-${Date.now()}`,
+            role: 'user' as const,
+            content: input.trim(),
+            at: new Date().toISOString(),
+        };
+        if (!chatMode) setChatMode(true);
+        setMessages((prev) => [...prev, userMsg]);
+        setInput('');
+        try {
+            const res = await fetch('/partners/assist', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken() ?? '',
+                },
+                body: JSON.stringify({ partner_id: selectedPartnerId, message: userMsg.content }),
+            });
+            // We don't strictly need the response to switch UI; but we can optionally process it
+            if (res.ok) {
+                const json = await res.json().catch(() => null);
+                if (json?.data?.reply) {
+                    setMessages((prev) => [
+                        ...prev,
+                        { id: `a-${Date.now()}`, role: 'assistant', content: String(json.data.reply), at: new Date().toISOString() },
+                    ]);
+                }
+            }
+        } catch {
+            // Show a simple error message in chat area
+            setMessages((prev) => [
+                ...prev,
+                { id: `sys-${Date.now()}`, role: 'assistant', content: 'Failed to send. Please try again.', at: new Date().toISOString() },
+            ]);
+        } finally {
+            setIsSending(false);
+        }
+    }
+
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -151,15 +208,49 @@ export default function Dashboard() {
                                     </Select>
                                 </div>
                             )}
-                            <Textarea
-                                autoFocus={true}
-                                placeholder={
-                                    partners.length === 1
-                                        ? `Get advice from Life Partner AI for ${partners[0].name}`
-                                        : `Get advice from Life Partner AI for ${partners.find((p) => p.id === selectedPartnerId)?.name ?? 'selected partner'}`
-                                }
-                                aria-label="Assistant input"
-                            />
+
+                            {/* Chat window */}
+                            {chatMode && (
+                                <div className="mb-3 max-h-80 overflow-y-auto rounded-lg border border-border bg-card p-3">
+                                    {messages.length === 0 && (
+                                        <div className="text-sm text-muted-foreground">No messages yet.</div>
+                                    )}
+                                    {messages.map((m) => (
+                                        <div key={m.id} className={`mb-2 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[80%] rounded-md px-3 py-2 text-sm ${m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
+                                                {m.content}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div ref={chatEndRef} />
+                                </div>
+                            )}
+
+                            {/* Input + Send */}
+                            <div className="space-y-2">
+                                <Textarea
+                                    autoFocus={true}
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder={
+                                        partners.length === 1
+                                            ? `Get advice from Life Partner AI for ${partners[0].name}`
+                                            : `Get advice from Life Partner AI for ${partners.find((p) => p.id === selectedPartnerId)?.name ?? 'selected partner'}`
+                                    }
+                                    aria-label="Assistant input"
+                                    onKeyDown={(e) => {
+                                        if ((e.key === 'Enter' && (e.metaKey || e.ctrlKey)) || (e.key === 'Enter' && !e.shiftKey)) {
+                                            e.preventDefault();
+                                            void handleSend();
+                                        }
+                                    }}
+                                />
+                                <div className="flex justify-end">
+                                    <Button onClick={() => void handleSend()} disabled={isSending || !input.trim() || selectedPartnerId === null}>
+                                        {isSending ? 'Sending…' : 'Send'}
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

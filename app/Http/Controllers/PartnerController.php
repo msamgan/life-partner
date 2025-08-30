@@ -68,4 +68,25 @@ class PartnerController extends Controller
             'data' => $partners,
         ]);
     }
+
+    public function assist(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'partner_id' => ['required', 'integer', 'exists:partners,id'],
+            'message' => ['required', 'string', 'min:1'],
+        ]);
+
+        $partner = Partner::findOrFail($validated['partner_id']);
+        abort_unless($partner->user_id === $request->user()->id, 403);
+
+        // For now we just echo back a stub response; integration with AI can be added later.
+        return response()->json([
+            'data' => [
+                'partner_id' => $partner->id,
+                'message' => $validated['message'],
+                'reply' => null,
+                'timestamp' => now()->toIso8601String(),
+            ],
+        ]);
+    }
 }
