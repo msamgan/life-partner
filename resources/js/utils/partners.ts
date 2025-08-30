@@ -1,10 +1,5 @@
 import partnersRoutes from '@/routes/partners';
-
-export type Partner = {
-  id: number;
-  name: string;
-  description?: string | null;
-};
+import { type Partner } from '@types';
 
 export async function fetchPartners(): Promise<Partner[]> {
   const res = await fetch(partnersRoutes.list().url, { headers: { Accept: 'application/json' } });

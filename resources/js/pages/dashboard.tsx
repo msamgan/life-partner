@@ -4,7 +4,7 @@ import partnersRoutes from '@/routes/partners';
 import { fetchPartners } from '@/utils/partners';
 import informationRoutes from '@/routes/information';
 import { Button } from '@/components/ui/button';
-import { type BreadcrumbItem } from '@types';
+import { type BreadcrumbItem, type Partner, type Information } from '@types';
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,15 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type Partner = {
-    id: number;
-    name: string;
-    description?: string | null;
-};
 
-type Information = {
-    id: number;
-};
 
 export default function Dashboard() {
     const [selectedPartnerId, setSelectedPartnerId] = useState<number | null>(null);

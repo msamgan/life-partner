@@ -40,3 +40,16 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+// Domain types moved out from pages
+export interface Partner {
+    id: number;
+    name: string;
+    description?: string | null;
+}
+
+export interface Information {
+    id: number;
+    content?: string; // optional on dashboard list context
+    partner_id?: number | null; // some pages may not require it
+}

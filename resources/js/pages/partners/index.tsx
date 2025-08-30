@@ -9,7 +9,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTi
 import AppLayout from '@/layouts/app-layout';
 import partnersRoutes from '@/routes/partners';
 import { fetchPartners } from '@/utils/partners';
-import { type BreadcrumbItem } from '@types';
+import { type BreadcrumbItem, type Partner } from '@types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -21,11 +21,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type Partner = {
-    id: number;
-    name: string;
-    description?: string | null;
-};
 
 export default function PartnersPage() {
     const [partners, setPartners] = useState<Partner[]>([]);

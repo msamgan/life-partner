@@ -9,7 +9,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTi
 import AppLayout from '@/layouts/app-layout';
 import informationRoutes from '@/routes/information';
 import partnersRoutes from '@/routes/partners';
-import { type BreadcrumbItem } from '@types';
+import { type BreadcrumbItem, type Information, type Partner } from '@types';
 import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -21,17 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type Information = {
-    id: number;
-    content: string;
-    partner_id: number | null;
-    partner_name?: string | null;
-};
 
-type Partner = {
-    id: number;
-    name: string;
-};
 
 
 function Textarea(props: React.ComponentProps<'textarea'>) {
